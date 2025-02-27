@@ -34,6 +34,9 @@ CredentialsUserInput = collections.namedtuple(
         ['name', 'mask', 'value', 'can_store']
     )
 
+def toggle_password_visibility(entry, icon_pos, event):
+        visible = entry.get_visibility()
+        entry.set_visibility(not visible)
 
 def construct_credentials_dialog(name, user_inputs, allow_store=True, on_connect=None, on_cancel=None):
     dialog = Gtk.Dialog('OpenVPN Credentials')
@@ -60,6 +63,11 @@ def construct_credentials_dialog(name, user_inputs, allow_store=True, on_connect
         entry = Gtk.Entry(hexpand=True)
         if user_input.mask:
             entry.set_visibility(False)
+            entry.set_icon_from_icon_name(
+            Gtk.EntryIconPosition.SECONDARY, "view-reveal-symbolic"
+        )
+        entry.set_icon_activatable(Gtk.EntryIconPosition.SECONDARY, True)
+        entry.connect("icon-press",toggle_password_visibility)
         if user_input.can_store:
             can_store = True
         if user_input.value is not None:
